@@ -1,0 +1,26 @@
+$username ="ExpertsI@mondimindgronau.de"
+$pwd = ""
+$cred = New-Object -TypeName System.Management.Automation.PSCredential -argumentlist $username, $(convertto-securestring $pwd -asplaintext -force)
+Connect-SPOService -Url https://mondimindgronau-admin.sharepoint.com -credential $cred
+$users = Get-SPOUser -Site https://mondimindgronau.sharepoint.com
+$userprofiles = New-Object System.Collections.ArrayList
+foreach ($user in $users)
+{
+$prof = Get-PnPUserProfileProperty -Account $user.LoginName
+$userprofiles.Add($prof)
+}
+
+foreach ($user in $userprofiles)
+{
+$item = @{
+    Dep = $user.UserProfileProperties.Department
+    Mail = $user.UserProfileProperties.AccountName
+}
+$res.Add($item)
+}
+
+$res | where-object {$_.Dep -eq "Refinement Prinitg"}
+
+
+
+
